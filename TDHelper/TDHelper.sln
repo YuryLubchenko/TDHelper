@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.438
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TDHelper", "TDHelper\TDHelper.csproj", "{C7C22636-2CAD-49E4-AB8E-1236B28B539D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C7C22636-2CAD-49E4-AB8E-1236B28B539D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7C22636-2CAD-49E4-AB8E-1236B28B539D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7C22636-2CAD-49E4-AB8E-1236B28B539D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7C22636-2CAD-49E4-AB8E-1236B28B539D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {12F70B66-F834-4CFF-91CF-8E2486860A24}
+	EndGlobalSection
+EndGlobal
