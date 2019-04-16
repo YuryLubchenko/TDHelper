@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using WindowsInput;
@@ -16,17 +17,53 @@ namespace Services
 
         private static readonly TimeSpan IdleThreshold = TimeSpan.FromSeconds(55);
 
-        private InputSimulator InputSimulator { get; }
+        private readonly Random Random = new Random();
+
+        private readonly InputSimulator InputSimulator = new InputSimulator();
+
+        private readonly List<Action> Actions;
 
         public IdleWorker()
         {
             LastMousePosition = IdleTimeFinder.GetMousePosition();
-            InputSimulator = new InputSimulator();
 
-            _timer = new Timer(Callback, null, TimerInterval, TimerInterval);
+            Actions = GetActions();
+
+            _timer = new Timer(Callback, null, TimeSpan.FromMilliseconds(0), TimerInterval);
         }
 
-        private bool CheckPosition()
+        private List<Action> GetActions()
+        {
+            var actions = new List<Action>
+            {
+                () => InputSimulator.Keyboard.KeyPress(VirtualKeyCode.LCONTROL),
+                () => InputSimulator.Keyboard.KeyPress(VirtualKeyCode.RCONTROL),
+                () => InputSimulator.Keyboard.KeyPress(VirtualKeyCode.LSHIFT),
+                () => InputSimulator.Keyboard.KeyPress(VirtualKeyCode.RSHIFT),
+                () => InputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE),
+                () => InputSimulator.Mouse.LeftButtonClick(),
+                () =>
+                {
+                    InputSimulator.Mouse.RightButtonClick();
+                    InputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
+                },
+                () => InputSimulator.Mouse.VerticalScroll((Random.Next(2) == 0 ? -1 : 1) * Random.Next(1, 5)),
+                () =>
+                {
+                    InputSimulator.Keyboard.KeyDown(VirtualKeyCode.LCONTROL);
+                    for(int i = 1; i <= Random.Next(1, 6); i++)
+                    {
+                        InputSimulator.Keyboard.KeyPress(VirtualKeyCode.TAB);
+                    }
+                    InputSimulator.Keyboard.KeyUp(VirtualKeyCode.LCONTROL);
+                }
+
+            };
+
+            return actions;
+        }
+
+        private bool MouseMoved()
         {
             var mPos = IdleTimeFinder.GetMousePosition();
             var lastPos = LastMousePosition;
@@ -37,61 +74,22 @@ namespace Services
 
         private async void Callback(object state)
         {
-            if (CheckPosition()) return;
+            if (MouseMoved()) return;
 
-            var idleTime = TimeSpan.FromMilliseconds(IdleTimeFinder.GetIdleTime());
-
-            if (idleTime < IdleThreshold)
+            if (IdleTimeFinder.GetIdleTime() < IdleThreshold)
                 return;
 
-            var random = new Random();
-
-            for (var i = 0; i < random.Next(20, 60); i++)
+            for (int i = 0; i < Random.Next(20, 60); i++)
             {
-                switch (random.Next(3))
-                {
-                    case 0:
-                        InputSimulator.Keyboard.KeyPress(VirtualKeyCode.CONTROL);
-                        break;
-                    case 1:
-                        InputSimulator.Mouse.XButtonClick(0);
-                        InputSimulator.Mouse.RightButtonClick();
-                        InputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
-                        break;
-                    case 2:
-                        InputSimulator.Keyboard.KeyPress(VirtualKeyCode.SHIFT);
-                        break;
-                }
+                if (MouseMoved())
+                    return;
 
-                await Task.Delay(random.Next(100, 200));
+                var action = Actions[Random.Next(Actions.Count)];
 
-                if (CheckPosition()) return;
+                action();
 
-                InputSimulator.Mouse.RightButtonClick();
-                InputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
-                await Task.Delay(random.Next(100, 200));
-
-                if (CheckPosition()) return;
-
+                await Task.Delay(Random.Next(100, 200));                
             }
-
-            if (random.Next(5) == 4)
-            {
-                InputSimulator.Keyboard.KeyDown(VirtualKeyCode.CONTROL);
-                for (int k = 0; k < random.Next(4) + 1; k++)
-                {
-                    InputSimulator.Keyboard.KeyPress(VirtualKeyCode.TAB);
-                }
-                InputSimulator.Keyboard.KeyUp(VirtualKeyCode.CONTROL);
-            }
-
-            InputSimulator.Mouse.VerticalScroll((random.Next(2) == 0 ? 1 : -1) * random.Next(7));
-            await Task.Delay(random.Next(50, 80));
-            InputSimulator.Mouse.LeftButtonClick();
-            await Task.Delay(random.Next(50, 80));
-            InputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
-
-            if (CheckPosition()) return;
         }
     }
 }

@@ -32,7 +32,7 @@ namespace TDHelper
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            var idleTime = TimeSpan.FromMilliseconds(IdleTimeFinder.GetIdleTime());
+            var idleTime = IdleTimeFinder.GetIdleTime();
 
             IdleTextBox.Text = idleTime.ToString(TimeSpanFormat);
             StartedOnTextBox.Text = (DateTime.Now - Started).ToString(TimeSpanFormat);
