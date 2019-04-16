@@ -86,6 +86,8 @@ namespace Services
 
                 var action = Actions[Random.Next(Actions.Count)];
 
+                InputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
+
                 action();
 
                 await Task.Delay(Random.Next(100, 200));                
