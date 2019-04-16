@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Main
+namespace Services
 {
-    class IdleTimeFinder
+    public static class IdleTimeFinder
     {
         [DllImport("User32.dll")]
         static extern bool GetCursorPos(out POINT lpPoint);

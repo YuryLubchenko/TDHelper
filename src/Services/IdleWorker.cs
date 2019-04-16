@@ -4,14 +4,15 @@ using System.Threading.Tasks;
 using WindowsInput;
 using WindowsInput.Native;
 
-namespace Main
+namespace Services
 {
-    class IdleWorker
+    public class IdleWorker
     {
         private (int X, int Y) LastMousePosition { get; set; }
-        private Timer Timer { get; }
 
-        private const int TimerInterval = 1000;
+        private readonly Timer _timer;
+
+        private static readonly TimeSpan TimerInterval = TimeSpan.FromSeconds(1);
 
         private static readonly TimeSpan IdleThreshold = TimeSpan.FromSeconds(55);
 
@@ -22,9 +23,7 @@ namespace Main
             LastMousePosition = IdleTimeFinder.GetMousePosition();
             InputSimulator = new InputSimulator();
 
-            Timer = new Timer(Callback, null, TimerInterval, TimerInterval);
-
-            Console.WriteLine($"Started: {DateTime.Now}");
+            _timer = new Timer(Callback, null, TimerInterval, TimerInterval);
         }
 
         private bool CheckPosition()
@@ -51,9 +50,17 @@ namespace Main
             {
                 switch (random.Next(3))
                 {
-                    case 0: InputSimulator.Keyboard.KeyPress(VirtualKeyCode.CONTROL); break;
-                    case 1: InputSimulator.Mouse.XButtonClick(0); InputSimulator.Mouse.RightButtonClick(); InputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE); break;
-                    case 2: InputSimulator.Keyboard.KeyPress(VirtualKeyCode.SHIFT); break;
+                    case 0:
+                        InputSimulator.Keyboard.KeyPress(VirtualKeyCode.CONTROL);
+                        break;
+                    case 1:
+                        InputSimulator.Mouse.XButtonClick(0);
+                        InputSimulator.Mouse.RightButtonClick();
+                        InputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
+                        break;
+                    case 2:
+                        InputSimulator.Keyboard.KeyPress(VirtualKeyCode.SHIFT);
+                        break;
                 }
 
                 await Task.Delay(random.Next(100, 200));
@@ -85,9 +92,6 @@ namespace Main
             InputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
 
             if (CheckPosition()) return;
-
-            Console.Write("    ");
-            Console.Write(DateTime.Now.ToString("HH:mm:ss"));
         }
     }
 }

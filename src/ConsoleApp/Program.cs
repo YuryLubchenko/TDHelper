@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Services;
+using System;
 
-namespace Main
+namespace ConsoleApp
 {
     class Program
     {
@@ -9,6 +10,8 @@ namespace Main
         static void Main(string[] args)
         {
             _idleWorker = new IdleWorker();
+
+            Console.WriteLine($"Started: {DateTime.Now}");
 
             Console.WriteLine("Press any key to quit");
 
