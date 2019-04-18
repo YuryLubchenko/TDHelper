@@ -22,12 +22,17 @@ namespace TDHelper
         {
             InitializeComponent();
 
+            CreateNotificationIcon();
+
             Started = DateTime.Now;
 
             Timer = new DispatcherTimer();
             Timer.Tick += new EventHandler(Timer_Tick);
             Timer.Interval = TimerInterval;
             Timer.Start();
+
+            WindowState = WindowState.Minimized;
+            ShowInTaskbar = false;
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -36,6 +41,31 @@ namespace TDHelper
 
             IdleTextBox.Text = idleTime.ToString(TimeSpanFormat);
             StartedOnTextBox.Text = (DateTime.Now - Started).ToString(TimeSpanFormat);
+        }
+
+        private void CreateNotificationIcon()
+        {
+            System.Windows.Forms.NotifyIcon ni = new System.Windows.Forms.NotifyIcon();
+            ni.Icon = new System.Drawing.Icon("icon.ico");
+            ni.Visible = true;
+            ni.DoubleClick +=
+                delegate (object sender, EventArgs args)
+                {
+                    Show();
+                    WindowState = WindowState.Normal;
+                    ShowInTaskbar = true;
+                };
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            if (WindowState == WindowState.Minimized)
+            {
+                Hide();
+                ShowInTaskbar = false;
+            }
+
+            base.OnStateChanged(e);
         }
     }
 }

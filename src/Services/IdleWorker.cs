@@ -34,20 +34,13 @@ namespace Services
 
         private List<Action> GetActions()
         {
-            var actions = new List<Action>
+            var keyboardActions = new List<Action>
             {
                 () => InputSimulator.Keyboard.KeyPress(VirtualKeyCode.LCONTROL),
                 () => InputSimulator.Keyboard.KeyPress(VirtualKeyCode.RCONTROL),
                 () => InputSimulator.Keyboard.KeyPress(VirtualKeyCode.LSHIFT),
                 () => InputSimulator.Keyboard.KeyPress(VirtualKeyCode.RSHIFT),
                 () => InputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE),
-                () => InputSimulator.Mouse.LeftButtonClick(),
-                () =>
-                {
-                    InputSimulator.Mouse.RightButtonClick();
-                    InputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
-                },
-                () => InputSimulator.Mouse.VerticalScroll((Random.Next(2) == 0 ? -1 : 1) * Random.Next(1, 5)),
                 () =>
                 {
                     InputSimulator.Keyboard.KeyDown(VirtualKeyCode.LCONTROL);
@@ -59,6 +52,30 @@ namespace Services
                 }
 
             };
+
+            var mouseActions = new List<Action>
+            {
+                () => InputSimulator.Mouse.LeftButtonClick(),
+                () =>
+                {
+                    InputSimulator.Mouse.RightButtonClick();
+                    InputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
+                },
+                () => InputSimulator.Mouse.VerticalScroll(Random.Next(1, 5)),
+                () => InputSimulator.Mouse.VerticalScroll(-1 * Random.Next(1, 5))
+            };
+
+            var actions = new List<Action>();
+
+            for (int i = 0; i < 1; i++)
+            {
+                actions.AddRange(keyboardActions);
+            }
+
+            for (int i = 0; i < 5; i++)
+            {
+                actions.AddRange(mouseActions);
+            }
 
             return actions;
         }
@@ -79,7 +96,7 @@ namespace Services
             if (IdleTimeFinder.GetIdleTime() < IdleThreshold)
                 return;
 
-            for (int i = 0; i < Random.Next(20, 60); i++)
+            for (int i = 0; i < Random.Next(40, 80); i++)
             {
                 if (MouseMoved())
                     return;

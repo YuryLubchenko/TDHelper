@@ -8,18 +8,19 @@
         SizeToContent="WidthAndHeight"
         ResizeMode="CanMinimize">
         <Grid>
-                <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-        <Label Grid.Column="0" Grid.Row="0" Content="Idle Time"/>
-        <TextBox Grid.Column="1" Grid.Row="0" IsReadOnly="True" Name="IdleTextBox" Width="200px" Margin="10 5 10 5"></TextBox>
-
-        <Label Grid.Column="0" Grid.Row="1" Content="Started On"/>
-        <TextBox Grid.Column="1" Grid.Row="1" IsReadOnly="True" Name="StartedOnTextBox" Width="200px" Margin="10 5 10 5"></TextBox>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <Label Grid.Column="0" Grid.Row="0" Content="Idle Time"/>
+            <TextBox Grid.Column="1" Grid.Row="0" IsReadOnly="True" Name="IdleTextBox" Width="200px" Margin="10 5 10 5"></TextBox>
+            
+            <Label Grid.Column="0" Grid.Row="1" Content="Started On"/>
+            <TextBox Grid.Column="1" Grid.Row="1" IsReadOnly="True" Name="StartedOnTextBox" Width="200px" Margin="10 5 10 5"></TextBox>
         </Grid>
 </Window>
