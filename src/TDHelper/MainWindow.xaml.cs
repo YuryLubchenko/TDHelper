@@ -8,7 +8,7 @@ namespace TDHelper
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         private const string TimeSpanFormat = "hh\\:mm\\:ss";
 
@@ -16,7 +16,7 @@ namespace TDHelper
 
         private static readonly TimeSpan TimerInterval = TimeSpan.FromSeconds(1);
 
-        private DateTime Started { get; set; }
+        private DateTime Started { get; }
 
         public MainWindow()
         {
@@ -27,7 +27,7 @@ namespace TDHelper
             Started = DateTime.Now;
 
             Timer = new DispatcherTimer();
-            Timer.Tick += new EventHandler(Timer_Tick);
+            Timer.Tick += Timer_Tick;
             Timer.Interval = TimerInterval;
             Timer.Start();
 
@@ -49,7 +49,7 @@ namespace TDHelper
             ni.Icon = new System.Drawing.Icon("icon.ico");
             ni.Visible = true;
             ni.DoubleClick +=
-                delegate (object sender, EventArgs args)
+                delegate
                 {
                     Show();
                     WindowState = WindowState.Normal;

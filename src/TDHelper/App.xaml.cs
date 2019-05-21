@@ -6,7 +6,7 @@ namespace TDHelper
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
         private IdleWorker _idleWorker;
 
@@ -16,6 +16,11 @@ namespace TDHelper
             
             var window = new MainWindow();
             window.Show();
+        }
+
+        private void App_OnExit(object sender, ExitEventArgs e)
+        {
+            _idleWorker?.Stop();
         }
     }
 }

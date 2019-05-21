@@ -6,17 +6,17 @@ namespace Services
     public static class IdleTimeFinder
     {
         [DllImport("User32.dll")]
-        private static extern bool GetCursorPos(out POINT lpPoint);
+        private static extern bool GetCursorPos(out Point lpPoint);
 
         [DllImport("User32.dll")]
-        private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
+        private static extern bool GetLastInputInfo(ref LastInputInfo plii);
 
         [DllImport("Kernel32.dll")]
         private static extern uint GetLastError();
 
         public static (int X, int Y) GetMousePosition()
         {
-            if (GetCursorPos(out POINT point))
+            if (GetCursorPos(out Point point))
             {
                 return (point.X, point.Y);
             }
@@ -25,36 +25,36 @@ namespace Services
 
         public static TimeSpan GetIdleTime()
         {
-            var lastInput = new LASTINPUTINFO();
+            var lastInput = new LastInputInfo();
 
-            lastInput.cbSize = (uint)Marshal.SizeOf(lastInput);
+            lastInput.CbSize = (uint)Marshal.SizeOf(lastInput);
 
             GetLastInputInfo(ref lastInput);
 
-            return TimeSpan.FromMilliseconds(Environment.TickCount - lastInput.dwTime);
+            return TimeSpan.FromMilliseconds(Environment.TickCount - lastInput.DwTime);
         }
 
         public static long GetLastInputTime()
         {
-            var lastInput = new LASTINPUTINFO();
+            var lastInput = new LastInputInfo();
 
-            lastInput.cbSize = (uint)Marshal.SizeOf(lastInput);
+            lastInput.CbSize = (uint)Marshal.SizeOf(lastInput);
 
             if (!GetLastInputInfo(ref lastInput))
             {
                 throw new Exception(GetLastError().ToString());
             }
 
-            return lastInput.dwTime;
+            return lastInput.DwTime;
         }
 
-        private struct LASTINPUTINFO
+        private struct LastInputInfo
         {
-            public uint cbSize;
-            public uint dwTime;
+            public uint CbSize;
+            public uint DwTime;
         }
 
-        private struct POINT
+        private struct Point
         {
             public int X;
             public int Y;

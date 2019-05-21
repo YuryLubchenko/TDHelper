@@ -15,54 +15,61 @@ namespace Services
 
         private static readonly TimeSpan TimerInterval = TimeSpan.FromSeconds(1);
 
-        private static readonly TimeSpan IdleThreshold = TimeSpan.FromSeconds(55);
+        private static readonly TimeSpan IdleThreshold = TimeSpan.FromSeconds(10);
 
-        private readonly Random Random = new Random();
+        private readonly Random _random = new Random();
 
-        private readonly InputSimulator InputSimulator = new InputSimulator();
+        private readonly InputSimulator _inputSimulator = new InputSimulator();
 
-        private readonly List<Action> Actions;
+        private readonly List<Action> _actions;
 
         public IdleWorker()
         {
             LastMousePosition = IdleTimeFinder.GetMousePosition();
 
-            Actions = GetActions();
+            _actions = GetActions();
 
             _timer = new Timer(Callback, null, TimeSpan.FromMilliseconds(0), TimerInterval);
+        }
+
+        public void Stop()
+        {
+            _timer.Dispose();
         }
 
         private List<Action> GetActions()
         {
             var keyboardActions = new List<Action>
             {
-                () => InputSimulator.Keyboard.KeyPress(VirtualKeyCode.LCONTROL),
-                () => InputSimulator.Keyboard.KeyPress(VirtualKeyCode.RCONTROL),
-                () => InputSimulator.Keyboard.KeyPress(VirtualKeyCode.LSHIFT),
-                () => InputSimulator.Keyboard.KeyPress(VirtualKeyCode.RSHIFT),
-                () => InputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE),
+                () => _inputSimulator.Keyboard.KeyPress(VirtualKeyCode.LCONTROL),
+                () => _inputSimulator.Keyboard.KeyPress(VirtualKeyCode.RCONTROL),
+                () => _inputSimulator.Keyboard.KeyPress(VirtualKeyCode.LSHIFT),
+                () => _inputSimulator.Keyboard.KeyPress(VirtualKeyCode.RSHIFT),
+                () => _inputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE),
                 () =>
                 {
-                    InputSimulator.Keyboard.KeyDown(VirtualKeyCode.LCONTROL);
-                    for(int i = 1; i <= Random.Next(1, 6); i++)
+                    _inputSimulator.Keyboard.KeyDown(VirtualKeyCode.LCONTROL);
+                    for(int i = 1, n = _random.Next(1, 6); i <= n; i++)
                     {
-                        InputSimulator.Keyboard.KeyPress(VirtualKeyCode.TAB);
+                        Thread.Sleep(100);
+                        _inputSimulator.Keyboard.KeyPress(VirtualKeyCode.TAB);
                     }
-                    InputSimulator.Keyboard.KeyUp(VirtualKeyCode.LCONTROL);
+                    _inputSimulator.Keyboard.KeyUp(VirtualKeyCode.LCONTROL);
                 }
 
             };
 
             var mouseActions = new List<Action>
             {
-                () => InputSimulator.Mouse.LeftButtonClick(),
+                () => _inputSimulator.Mouse.LeftButtonClick(),
                 () =>
                 {
-                    InputSimulator.Mouse.RightButtonClick();
-                    InputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
+                    _inputSimulator.Mouse.RightButtonClick();
+                    Thread.Sleep(50);
+                    _inputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
                 },
-                () => InputSimulator.Mouse.VerticalScroll(Random.Next(1, 5)),
-                () => InputSimulator.Mouse.VerticalScroll(-1 * Random.Next(1, 5))
+                () => _inputSimulator.Mouse.VerticalScroll(_random.Next(1, 5)),
+                () => _inputSimulator.Mouse.VerticalScroll(-1 * _random.Next(1, 5))
             };
 
             var actions = new List<Action>();
@@ -96,18 +103,18 @@ namespace Services
             if (IdleTimeFinder.GetIdleTime() < IdleThreshold)
                 return;
 
-            for (int i = 0; i < Random.Next(40, 80); i++)
+            for (int i = 0; i < _random.Next(40, 80); i++)
             {
                 if (MouseMoved())
                     return;
 
-                var action = Actions[Random.Next(Actions.Count)];
+                _actions[_random.Next(_actions.Count)]();
 
-                InputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
+                await Task.Delay(50);
+                
+                _inputSimulator.Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
 
-                action();
-
-                await Task.Delay(Random.Next(100, 200));                
+                await Task.Delay(_random.Next(100, 200));
             }
         }
     }
