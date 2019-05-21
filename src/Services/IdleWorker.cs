@@ -15,7 +15,7 @@ namespace Services
 
         private static readonly TimeSpan TimerInterval = TimeSpan.FromSeconds(1);
 
-        private static readonly TimeSpan IdleThreshold = TimeSpan.FromSeconds(10);
+        private static readonly TimeSpan IdleThreshold = TimeSpan.FromSeconds(55);
 
         private readonly Random _random = new Random();
 
