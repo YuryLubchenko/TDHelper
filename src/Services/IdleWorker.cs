@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,6 +24,8 @@ namespace Services
 
         private readonly List<Action> _actions;
 
+        private bool _sessionLocked;
+
         public IdleWorker()
         {
             LastMousePosition = IdleTimeFinder.GetMousePosition();
@@ -30,11 +33,26 @@ namespace Services
             _actions = GetActions();
 
             _timer = new Timer(Callback, null, TimeSpan.FromMilliseconds(0), TimerInterval);
+
+            SystemEvents.SessionSwitch += OnSessionSwitch;
         }
 
         public void Stop()
         {
             _timer.Dispose();
+            SystemEvents.SessionSwitch -= OnSessionSwitch;
+        }
+
+        private void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
+        {
+            if (e.Reason == SessionSwitchReason.SessionLock)
+            {
+                _sessionLocked = true;
+            }
+            else if (e.Reason == SessionSwitchReason.SessionUnlock)
+            {
+                _sessionLocked = false;
+            }
         }
 
         private List<Action> GetActions()
@@ -98,9 +116,7 @@ namespace Services
 
         private async void Callback(object state)
         {
-            if (MouseMoved()) return;
-
-            if (IdleTimeFinder.GetIdleTime() < IdleThreshold)
+            if (_sessionLocked || MouseMoved() || IdleTimeFinder.GetIdleTime() < IdleThreshold)
                 return;
 
             for (int i = 0; i < _random.Next(40, 80); i++)
