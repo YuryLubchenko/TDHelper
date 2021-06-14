@@ -7,7 +7,8 @@
         Title="TDHelper"
         SizeToContent="Height"
         ResizeMode="CanMinimize"
-        Width="300">
+        Width="300"
+        Closing="MainWindow_OnClosing">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>

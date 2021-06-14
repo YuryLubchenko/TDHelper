@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="InputSimulator" Version="1.0.4" />
+      <!--<PackageReference Include="InputSimulator" Version="1.0.4" />-->
+      <PackageReference Include="InputSimulatorCore" Version="1.0.5" />
       <PackageReference Include="Microsoft.Win32.SystemEvents" Version="4.5.0" />
     </ItemGroup>
 

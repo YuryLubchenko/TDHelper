@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Threading;
 using Services;
 
@@ -10,7 +12,7 @@ namespace TDHelper
     /// </summary>
     public partial class MainWindow
     {
-        private const string TimeSpanFormat = "hh\\:mm\\:ss";
+        private const string TimeSpanFormat = @"dd\.hh\:mm\:ss";
 
         private DispatcherTimer Timer { get; }
 
@@ -18,13 +20,15 @@ namespace TDHelper
 
         private DateTime Started { get; }
 
+        private NotifyIcon _notifyIcon;
+
         public MainWindow()
         {
             InitializeComponent();
 
             CreateNotificationIcon();
 
-            Started = DateTime.Now;
+            Started = DateTime.Now.AddDays(-7);
 
             Timer = new DispatcherTimer();
             Timer.Tick += Timer_Tick;
@@ -45,16 +49,15 @@ namespace TDHelper
 
         private void CreateNotificationIcon()
         {
-            System.Windows.Forms.NotifyIcon ni = new System.Windows.Forms.NotifyIcon();
-            ni.Icon = new System.Drawing.Icon("icon.ico");
-            ni.Visible = true;
-            ni.DoubleClick +=
-                delegate
-                {
-                    Show();
-                    WindowState = WindowState.Normal;
-                    ShowInTaskbar = true;
-                };
+            _notifyIcon = new NotifyIcon {Icon = new System.Drawing.Icon("icon.ico"), Visible = true};
+            _notifyIcon.DoubleClick += NotifyIconOnDoubleClick;
+        }
+
+        private void NotifyIconOnDoubleClick(object sender, EventArgs e)
+        {
+            Show();
+            WindowState = WindowState.Normal;
+            ShowInTaskbar = true;
         }
 
         protected override void OnStateChanged(EventArgs e)
@@ -66,6 +69,12 @@ namespace TDHelper
             }
 
             base.OnStateChanged(e);
+        }
+
+        private void MainWindow_OnClosing(object sender, CancelEventArgs e)
+        {
+            _notifyIcon.DoubleClick -= NotifyIconOnDoubleClick;
+            _notifyIcon?.Dispose();
         }
     }
 }
