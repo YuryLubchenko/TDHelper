@@ -28,7 +28,7 @@ namespace TDHelper
 
             CreateNotificationIcon();
 
-            Started = DateTime.Now.AddDays(-7);
+            Started = DateTime.Now;
 
             Timer = new DispatcherTimer();
             Timer.Tick += Timer_Tick;
